@@ -1,30 +1,99 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
+import PricingPopup from './PricingPopup';
+import StatusPopup from './StatusPopup';
 
-function UploadInterface() {
+const UploadInterface = forwardRef((props, ref) => {
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [selectedTier, setSelectedTier] = useState('standard');
-  const [currentStep, setCurrentStep] = useState('upload'); // 'upload', 'tier', 'processing'
+  const [selectedTier, setSelectedTier] = useState('professional');
+  const [currentStep, setCurrentStep] = useState('upload'); // 'upload', 'processing'
   const [progress, setProgress] = useState(0);
   const [showDownload, setShowDownload] = useState(false);
+  const [showPricingPopup, setShowPricingPopup] = useState(false);
+  const [showStatusPopup, setShowStatusPopup] = useState(false);
+  const [jobId, setJobId] = useState(null);
+  const [paymentUrl, setPaymentUrl] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [showUploadLoading, setShowUploadLoading] = useState(false);
 
-  const tiers = [
-    { id: 'standard', name: 'Standard', price: '$5' },
-    { id: 'pro', name: 'Pro', price: '$15' },
-    { id: 'enterprise', name: 'Enterprise', price: '$50' }
-  ];
+  // Map pricing tiers to API levels
+  const getApiLevel = (tier) => {
+    switch (tier) {
+      case 'standard':
+        return 'moderate';
+      case 'professional':
+        return 'aggressive';
+      case 'ultimate':
+        return 'extreme';
+      default:
+        return 'moderate';
+    }
+  };
+
+  const uploadFile = async (file, level) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('level', level);
+
+      const response = await fetch('https://ai-audio-b8gu.onrender.com/upload', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+          'Accept': 'application/json',
+        },
+        mode: 'cors',
+        credentials: 'omit'
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Upload error:', error);
+      throw error;
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       setUploadedFile(file);
-      setCurrentStep('tier');
+      setShowPricingPopup(true);
     }
   };
 
-  const handlePayment = () => {
-    setCurrentStep('processing');
-    setProgress(0);
-    setShowDownload(false);
+  const handlePlanSelection = async (planId) => {
+    setSelectedTier(planId);
+    setShowPricingPopup(false);
+    setShowUploadLoading(true);
+    
+    try {
+      const apiLevel = getApiLevel(planId);
+      const response = await uploadFile(uploadedFile, apiLevel);
+      
+      // Save the job ID, payment URL and show status popup
+      setJobId(response.job_id);
+      setPaymentUrl(response.payment_url);
+      setShowStatusPopup(true);
+      
+      // Also update the processing step for the UI
+      setCurrentStep('processing');
+      setProgress(0);
+      setShowDownload(false);
+    } catch (error) {
+      console.error('Failed to upload file:', error);
+      // You could show an error message here
+      alert('Failed to upload file. Please try again.');
+    } finally {
+      setShowUploadLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -45,7 +114,7 @@ function UploadInterface() {
   }, [currentStep, progress]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div ref={ref} className="flex flex-col min-h-screen">
       <main className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="w-full max-w-4xl mx-auto">
           <div className="bg-background-light dark:bg-background-dark/50 rounded-xl shadow-lg p-6 sm:p-8 md:p-12 space-y-8">
@@ -74,49 +143,6 @@ function UploadInterface() {
               </div>
             )}
 
-            {/* Tier Selection */}
-            {currentStep === 'tier' && (
-              <div className="space-y-6 animate-fade-in-up">
-                <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
-                  Select a Tier
-                </h2>
-                <div className="flex justify-center">
-                  <div className="inline-flex rounded-lg shadow-sm" role="group">
-                    {tiers.map((tier, index) => (
-                      <button
-                        key={tier.id}
-                        onClick={() => setSelectedTier(tier.id)}
-                        className={`px-6 py-3 text-sm font-medium focus:z-10 focus:ring-2 focus:ring-primary/50 transition-all duration-300 hover:scale-105 ${
-                          index === 0
-                            ? 'rounded-l-lg'
-                            : index === tiers.length - 1
-                            ? 'rounded-r-lg'
-                            : ''
-                        } ${
-                          selectedTier === tier.id
-                            ? 'text-white bg-primary border border-primary hover:bg-primary/90'
-                            : 'text-gray-900 bg-white border border-gray-200 hover:bg-gray-100 hover:text-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600'
-                        }`}
-                        type="button"
-                      >
-                        {tier.name}
-                        <span className="block text-xs opacity-80">{tier.price}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <button
-                  onClick={handlePayment}
-                  className="w-full flex items-center justify-center gap-3 bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-all duration-300 hover:scale-105 animate-fade-in-up animation-delay-200"
-                >
-                  <svg className="h-6 w-6 fill-white" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <title>Stripe</title>
-                    <path d="M11.532 6.184c-1.325.228-2.222.748-2.69 1.554-.467.805-.48 1.983.084 3.342.564 1.36 1.638 2.274 2.92 2.766 1.282.492 2.23.758 2.699.97.47.212.704.423.704.686 0 .563-.532.998-1.583.998-1.325 0-2.31-.5-3.058-1.523l-1.64.998c.64 1.43 2.064 2.378 3.938 2.378 2.38 0 4.027-1.383 4.027-3.41 0-2.18-1.26-3.23-3.48-4.218-1.12-.492-2.132-.934-2.585-1.34-.454-.408-.639-.85-.639-1.372 0-.48.423-1.01 1.498-1.01.998 0 1.748.338 2.31.954l1.523-1.054c-.627-1.022-1.848-1.626-3.396-1.748L11.532 6.184zM4.5 6.5h2.155L9.36 17.5H7.135L6.03 14.55h-3.1L1.875 17.5H-.25L4.5 6.5zm.38 6.45h2.025l-1.012-3.092L4.88 12.95zM18.156 6.5l-2.024 7.272L14.07 6.5h-2.22l3.184 11h2.22l3.184-11h-2.28z"></path>
-                  </svg>
-                  <span>Pay with Stripe</span>
-                </button>
-              </div>
-            )}
 
             {/* Processing Container */}
             {currentStep === 'processing' && (
@@ -147,8 +173,50 @@ function UploadInterface() {
           </div>
         </div>
       </main>
+      
+      {/* Pricing Popup */}
+      <PricingPopup
+        isOpen={showPricingPopup}
+        onClose={() => setShowPricingPopup(false)}
+        onSelectPlan={handlePlanSelection}
+        isUploading={isUploading}
+      />
+      
+      {/* Status Popup */}
+      <StatusPopup
+        isOpen={showStatusPopup}
+        onClose={() => setShowStatusPopup(false)}
+        jobId={jobId}
+        paymentUrl={paymentUrl}
+      />
+      
+      {/* Upload Loading Overlay */}
+      {showUploadLoading && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-6"></div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Uploading Your File
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Please wait while we process your audio file and prepare it for cleaning...
+              </p>
+              
+              {/* Progress Bar */}
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-4">
+                <div className="bg-primary h-3 rounded-full animate-pulse" style={{ width: '100%' }}></div>
+              </div>
+              
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                This may take a few moments
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+});
 
 export default UploadInterface;
