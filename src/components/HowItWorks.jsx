@@ -48,12 +48,12 @@ function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
+    <section id="how-it-works" className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8 bg-background-light dark:bg-background-dark">
       <div className="w-full max-w-7xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 dark:text-gray-50 mb-12 animate-fade-in-up">
           What This Tool Actually Does
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8">
           {steps.map((step, index) => (
             <div 
               key={index} 

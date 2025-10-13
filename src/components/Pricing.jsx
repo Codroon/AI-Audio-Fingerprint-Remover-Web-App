@@ -28,8 +28,18 @@ function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-background-dark via-background-dark to-gray-900 p-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
+    <section id="pricing" className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-background-dark via-background-dark to-gray-900 p-4">
+      {/* Heading Section */}
+      <div className="text-center mb-12 animate-fade-in-up">
+        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+          Choose Your Protection Level
+        </h2>
+        <p className="text-lg text-gray-400 max-w-3xl mx-auto">
+          Select the perfect tier for your audio protection needs. All plans include full anonymization and quality preservation.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 lg:gap-12 w-full max-w-6xl px-4">
         {plans.map((plan, index) => (
           <div 
             key={index}
