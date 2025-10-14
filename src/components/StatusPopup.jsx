@@ -13,7 +13,7 @@ function StatusPopup({ isOpen, onClose, jobId, paymentUrl }) {
 
   const handleDownload = () => {
     if (jobId) {
-      const downloadUrl = `https://ai-audio-b8gu.onrender.com/download/${jobId}`;
+      const downloadUrl = `http://ec2-18-217-51-53.us-east-2.compute.amazonaws.com:5000/download/${jobId}`;
       window.open(downloadUrl, '_blank', 'noopener,noreferrer');
     }
   };
@@ -28,7 +28,7 @@ function StatusPopup({ isOpen, onClose, jobId, paymentUrl }) {
       }
 
       try {
-        const response = await fetch(`https://ai-audio-b8gu.onrender.com/status/${jobId}`, {
+        const response = await fetch(`http://ec2-18-217-51-53.us-east-2.compute.amazonaws.com:5000/status/${jobId}`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',

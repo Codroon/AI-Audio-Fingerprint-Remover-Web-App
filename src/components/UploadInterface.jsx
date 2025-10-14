@@ -36,7 +36,7 @@ const UploadInterface = forwardRef((props, ref) => {
       formData.append('file', file);
       formData.append('level', level);
 
-      const response = await fetch('https://ai-audio-b8gu.onrender.com/upload', {
+      const response = await fetch('http://ec2-18-217-51-53.us-east-2.compute.amazonaws.com:5000/upload', {
         method: 'POST',
         body: formData,
         headers: {
