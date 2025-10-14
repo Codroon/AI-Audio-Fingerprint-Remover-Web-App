@@ -117,6 +117,18 @@ const UploadInterface = forwardRef((props, ref) => {
     <div ref={ref} className="flex flex-col min-h-screen">
       <main className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="w-full max-w-4xl mx-auto">
+          {/* Heading Section */}
+          {currentStep === 'upload' && (
+            <div className="text-center mb-8 animate-fade-in-down">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                Upload Your Audio File
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Start by uploading your audio file. We support MP3, WAV, FLAC, and M4A formats.
+              </p>
+            </div>
+          )}
+          
           <div className="bg-background-light dark:bg-background-dark/50 rounded-xl shadow-lg p-6 sm:p-8 md:p-12 space-y-8">
             
             {/* Upload Container */}
