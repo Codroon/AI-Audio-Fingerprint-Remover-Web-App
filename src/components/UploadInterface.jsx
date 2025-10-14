@@ -36,7 +36,7 @@ const UploadInterface = forwardRef((props, ref) => {
       formData.append('file', file);
       formData.append('level', level);
 
-      const response = await fetch('https://3fb81f43cea6.ngrok-free.app/upload', {
+      const response = await fetch('https://a24e5d89f558.ngrok-free.app/upload', {
         method: 'POST',
         body: formData,
         headers: {
