@@ -28,7 +28,7 @@ function StatusPopup({ isOpen, onClose, jobId, paymentUrl }) {
       }
 
       try {
-        const response = await fetch(`https://7ea53ff0e68f.ngrok-free.app/status/${jobId}`, {
+        const response = await fetch(`https://7ea53ff0e68f.ngrok-free.app/status/${jobId}`, { 
           method: 'GET',
           headers: {
             'Accept': 'application/json',
