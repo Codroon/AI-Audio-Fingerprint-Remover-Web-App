@@ -13,7 +13,7 @@ function StatusPopup({ isOpen, onClose, jobId, paymentUrl }) {
 
   const handleDownload = () => {
     if (jobId) {
-      const downloadUrl = `https://a24e5d89f558.ngrok-free.app/download/${jobId}`;
+      const downloadUrl = `https://7ea53ff0e68f.ngrok-free.app/download/${jobId}`;
       window.open(downloadUrl, '_blank', 'noopener,noreferrer');
     }
   };
@@ -28,7 +28,7 @@ function StatusPopup({ isOpen, onClose, jobId, paymentUrl }) {
       }
 
       try {
-        const response = await fetch(`https://a24e5d89f558.ngrok-free.app/status/${jobId}`, {
+        const response = await fetch(`https://7ea53ff0e68f.ngrok-free.app/status/${jobId}`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
