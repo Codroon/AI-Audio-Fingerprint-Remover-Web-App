@@ -1,11 +1,11 @@
-import { useState, useEffect, forwardRef } from 'react';
-import PricingPopup from './PricingPopup';
-import StatusPopup from './StatusPopup';
+import { useState, useEffect, forwardRef } from "react";
+import PricingPopup from "./PricingPopup";
+import StatusPopup from "./StatusPopup";
 
 const UploadInterface = forwardRef((props, ref) => {
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [selectedTier, setSelectedTier] = useState('professional');
-  const [currentStep, setCurrentStep] = useState('upload'); // 'upload', 'processing'
+  const [selectedTier, setSelectedTier] = useState("professional");
+  const [currentStep, setCurrentStep] = useState("upload"); // 'upload', 'processing'
   const [progress, setProgress] = useState(0);
   const [showDownload, setShowDownload] = useState(false);
   const [showPricingPopup, setShowPricingPopup] = useState(false);
@@ -18,14 +18,14 @@ const UploadInterface = forwardRef((props, ref) => {
   // Map pricing tiers to API levels
   const getApiLevel = (tier) => {
     switch (tier) {
-      case 'standard':
-        return 'gentle';  // $0.49/min maps to gentle level
-      case 'professional':
-        return 'aggressive';  // $0.99/min maps to aggressive level
-      case 'ultimate':
-        return 'extreme';  // $1.99/min maps to extreme level
+      case "standard":
+        return "gentle"; // $0.49/min maps to gentle level
+      case "professional":
+        return "aggressive"; // $0.99/min maps to aggressive level
+      case "ultimate":
+        return "extreme"; // $1.99/min maps to extreme level
       default:
-        return 'gentle';
+        return "gentle";
     }
   };
 
@@ -34,21 +34,24 @@ const UploadInterface = forwardRef((props, ref) => {
     try {
       console.log(`DEBUG: Uploading file with level: ${level}`);
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('level', level);
-      
-      console.log(`DEBUG: FormData level value: ${formData.get('level')}`);
+      formData.append("file", file);
+      formData.append("level", level);
 
-      const response = await fetch('https://7ea53ff0e68f.ngrok-free.app/upload', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'ngrok-skip-browser-warning': 'true',
-          'Accept': 'application/json',
-        },
-        mode: 'cors',
-        credentials: 'omit'
-      });
+      console.log(`DEBUG: FormData level value: ${formData.get("level")}`);
+
+      const response = await fetch(
+        "https://650f7f54388b.ngrok-free.app/upload",
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+            Accept: "application/json",
+          },
+          mode: "cors",
+          credentials: "omit",
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -57,7 +60,7 @@ const UploadInterface = forwardRef((props, ref) => {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
       throw error;
     } finally {
       setIsUploading(false);
@@ -76,32 +79,32 @@ const UploadInterface = forwardRef((props, ref) => {
     setSelectedTier(planId);
     setShowPricingPopup(false);
     setShowUploadLoading(true);
-    
+
     try {
       const apiLevel = getApiLevel(planId);
       console.log(`DEBUG: Selected plan: ${planId}, API level: ${apiLevel}`);
       const response = await uploadFile(uploadedFile, apiLevel);
-      
+
       // Save the job ID, payment URL and show status popup
       setJobId(response.job_id);
       setPaymentUrl(response.payment_url);
       setShowStatusPopup(true);
-      
+
       // Also update the processing step for the UI
-      setCurrentStep('processing');
+      setCurrentStep("processing");
       setProgress(0);
       setShowDownload(false);
     } catch (error) {
-      console.error('Failed to upload file:', error);
+      console.error("Failed to upload file:", error);
       // You could show an error message here
-      alert('Failed to upload file. Please try again.');
+      alert("Failed to upload file. Please try again.");
     } finally {
       setShowUploadLoading(false);
     }
   };
 
   useEffect(() => {
-    if (currentStep === 'processing' && progress < 100) {
+    if (currentStep === "processing" && progress < 100) {
       const interval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 100) {
@@ -122,21 +125,21 @@ const UploadInterface = forwardRef((props, ref) => {
       <main className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="w-full max-w-4xl mx-auto">
           {/* Heading Section */}
-          {currentStep === 'upload' && (
+          {currentStep === "upload" && (
             <div className="text-center mb-8 animate-fade-in-down">
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 Upload Your Audio File
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                Start by uploading your audio file. We support MP3, WAV, FLAC, and M4A formats.
+                Start by uploading your audio file. We support MP3, WAV, FLAC,
+                and M4A formats.
               </p>
             </div>
           )}
-          
+
           <div className="bg-background-light dark:bg-background-dark/50 rounded-xl shadow-lg p-6 sm:p-8 md:p-12 space-y-8">
-            
             {/* Upload Container */}
-            {currentStep === 'upload' && (
+            {currentStep === "upload" && (
               <div className="relative block w-full border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-12 text-center hover:border-primary/70 dark:hover:border-primary glow-on-hover cursor-pointer animate-fade-in-up">
                 <input
                   accept=".mp3,.wav,.flac,.m4a"
@@ -146,8 +149,19 @@ const UploadInterface = forwardRef((props, ref) => {
                   onChange={handleFileUpload}
                 />
                 <div className="flex flex-col items-center justify-center space-y-4">
-                  <svg className="w-20 h-20 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" strokeLinecap="round" strokeLinejoin="round"></path>
+                  <svg
+                    className="w-20 h-20 text-gray-400 dark:text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    ></path>
                   </svg>
                   <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
                     Drop your audio file here or click to upload
@@ -159,9 +173,8 @@ const UploadInterface = forwardRef((props, ref) => {
               </div>
             )}
 
-
             {/* Processing Container */}
-            {currentStep === 'processing' && (
+            {currentStep === "processing" && (
               <div className="space-y-6 animate-fade-in-up">
                 <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
                   Processing your audio...
@@ -178,8 +191,19 @@ const UploadInterface = forwardRef((props, ref) => {
                 )}
                 {showDownload && (
                   <button className="w-full flex items-center justify-center gap-2 bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-all duration-300 hover:scale-105 animate-scale-in">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" strokeLinecap="round" strokeLinejoin="round"></path>
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      ></path>
                     </svg>
                     <span>Download Cleaned Audio</span>
                   </button>
@@ -189,7 +213,7 @@ const UploadInterface = forwardRef((props, ref) => {
           </div>
         </div>
       </main>
-      
+
       {/* Pricing Popup */}
       <PricingPopup
         isOpen={showPricingPopup}
@@ -197,7 +221,7 @@ const UploadInterface = forwardRef((props, ref) => {
         onSelectPlan={handlePlanSelection}
         isUploading={isUploading}
       />
-      
+
       {/* Status Popup */}
       <StatusPopup
         isOpen={showStatusPopup}
@@ -205,7 +229,7 @@ const UploadInterface = forwardRef((props, ref) => {
         jobId={jobId}
         paymentUrl={paymentUrl}
       />
-      
+
       {/* Upload Loading Overlay */}
       {showUploadLoading && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50">
@@ -216,14 +240,18 @@ const UploadInterface = forwardRef((props, ref) => {
                 Uploading Your File
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Please wait while we process your audio file and prepare it for cleaning...
+                Please wait while we process your audio file and prepare it for
+                cleaning...
               </p>
-              
+
               {/* Progress Bar */}
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-4">
-                <div className="bg-primary h-3 rounded-full animate-pulse" style={{ width: '100%' }}></div>
+                <div
+                  className="bg-primary h-3 rounded-full animate-pulse"
+                  style={{ width: "100%" }}
+                ></div>
               </div>
-              
+
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 This may take a few moments
               </p>
