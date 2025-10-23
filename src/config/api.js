@@ -17,3 +17,4 @@ export const API_ENDPOINTS = {
   STATUS: `${API_CONFIG.BASE_URL}/status`,
   DOWNLOAD: `${API_CONFIG.BASE_URL}/download`,
 };
+

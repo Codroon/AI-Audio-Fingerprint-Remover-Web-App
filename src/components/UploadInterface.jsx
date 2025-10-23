@@ -19,22 +19,25 @@ const UploadInterface = forwardRef((props, ref) => {
   const getApiLevel = (tier) => {
     switch (tier) {
       case 'standard':
-        return 'moderate';
+        return 'gentle';  // $0.49/min maps to gentle level
       case 'professional':
-        return 'aggressive';
+        return 'aggressive';  // $0.99/min maps to aggressive level
       case 'ultimate':
-        return 'extreme';
+        return 'extreme';  // $1.99/min maps to extreme level
       default:
-        return 'moderate';
+        return 'gentle';
     }
   };
 
   const uploadFile = async (file, level) => {
     setIsUploading(true);
     try {
+      console.log(`DEBUG: Uploading file with level: ${level}`);
       const formData = new FormData();
       formData.append('file', file);
       formData.append('level', level);
+      
+      console.log(`DEBUG: FormData level value: ${formData.get('level')}`);
 
       const response = await fetch('https://7ea53ff0e68f.ngrok-free.app/upload', {
         method: 'POST',
@@ -76,6 +79,7 @@ const UploadInterface = forwardRef((props, ref) => {
     
     try {
       const apiLevel = getApiLevel(planId);
+      console.log(`DEBUG: Selected plan: ${planId}, API level: ${apiLevel}`);
       const response = await uploadFile(uploadedFile, apiLevel);
       
       // Save the job ID, payment URL and show status popup
