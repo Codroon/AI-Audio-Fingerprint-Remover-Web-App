@@ -6,7 +6,7 @@ function PricingPopup({ isOpen, onClose, onSelectPlan, isUploading = false }) {
       id: 'standard',
       name: "Standard Removal",
       description: "Gentle clean-up for low-risk audio. Removes common metadata and basic spectral marks while preserving full quality.",
-      price: "$0.49",
+      price: "$0.50",
       priceUnit: "/audio minute",
       borderColor: "border-purple-500",
       buttonClass: "bg-purple-600 hover:bg-purple-700"
@@ -15,7 +15,7 @@ function PricingPopup({ isOpen, onClose, onSelectPlan, isUploading = false }) {
       id: 'professional',
       name: "Professional Shield",
       description: "Aggressive cleaning with advanced spectral analysis and humanized normalization. Perfect balance of quality and security.",
-      price: "$0.99",
+      price: "$1.00",
       priceUnit: "/audio minute",
       borderColor: "border-cyan-500",
       buttonClass: "bg-cyan-600 hover:bg-cyan-700",
@@ -25,7 +25,7 @@ function PricingPopup({ isOpen, onClose, onSelectPlan, isUploading = false }) {
       id: 'ultimate',
       name: "Ultimate Stealth",
       description: "Maximum anonymization. Removes all known fingerprints, runs multiple cleaning passes, and adds robust verification.",
-      price: "$1.99",
+      price: "$2.00",
       priceUnit: "/audio minute",
       borderColor: "border-pink-500",
       buttonClass: "bg-pink-600 hover:bg-pink-700"
